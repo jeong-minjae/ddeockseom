@@ -1,0 +1,260 @@
+import 'package:flutter/material.dart';
+
+import '../../../core/theme/dashboard_palette.dart';
+
+class SidebarNavigation extends StatelessWidget {
+  const SidebarNavigation({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+
+    return Container(
+      width: 248,
+      padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
+      decoration: BoxDecoration(
+        color: palette.sidebarBackground,
+        border: Border(
+          right: BorderSide(color: palette.sidebarBorder),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildBrandSection(context),
+          const SizedBox(height: 28),
+          _buildNavigationButton(
+            context: context,
+            icon: Icons.dashboard_rounded,
+            label: 'Dashboard',
+            subtitle: '통합 현황',
+            isSelected: true,
+          ),
+          const SizedBox(height: 10),
+          _buildNavigationButton(
+            context: context,
+            icon: Icons.settings_rounded,
+            label: 'Settings',
+            subtitle: '환경 설정',
+          ),
+          const Spacer(),
+          _buildQuickActionButton(context),
+          const SizedBox(height: 18),
+          _buildManagerProfileCard(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBrandSection(BuildContext context) {
+    final palette = context.palette;
+
+    return Row(
+      children: [
+        Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            gradient: LinearGradient(
+              colors: [palette.accentBlue, palette.accentCyan],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: palette.glowColor,
+                blurRadius: 18,
+                spreadRadius: 1,
+              ),
+            ],
+          ),
+          child: const Icon(Icons.grid_view_rounded, color: Colors.white),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'ParkFlow',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: palette.primaryText,
+                    ),
+              ),
+              Text(
+                'Integrated Control',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: palette.mutedText,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNavigationButton({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required String subtitle,
+    bool isSelected = false,
+  }) {
+    return _NavigationButton(
+      icon: icon,
+      label: label,
+      subtitle: subtitle,
+      isSelected: isSelected,
+    );
+  }
+
+  Widget _buildQuickActionButton(BuildContext context) {
+    final palette = context.palette;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        gradient: LinearGradient(
+          colors: [palette.accentBlue, palette.accentCyan],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: palette.glowColor,
+            blurRadius: 18,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.flash_on_rounded, color: Colors.white, size: 18),
+          const SizedBox(width: 10),
+          Text(
+            'Quick Monitor',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildManagerProfileCard(BuildContext context) {
+    final palette = context.palette;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: palette.cardBackground,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: palette.cardBorder),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [palette.accentBlue, palette.accentCyan],
+              ),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              '김',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '김관리 소장',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+                Text(
+                  '통합관제 총괄',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: palette.mutedText,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavigationButton extends StatelessWidget {
+  const _NavigationButton({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    this.isSelected = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final bool isSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isSelected ? palette.selectedItemBackground : Colors.transparent,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: isSelected ? palette.cardBorder : Colors.transparent,
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 20,
+            color: isSelected ? palette.accentCyan : palette.secondaryText,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: isSelected ? palette.primaryText : palette.secondaryText,
+                      ),
+                ),
+                Text(
+                  subtitle,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: palette.mutedText,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
