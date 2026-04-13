@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/dashboard_palette.dart';
 import '../../../domain/models/parking_lot.dart';
-import '../../../domain/models/parking_lot_labels.dart';
 
 class ParkingLocationMapCard extends StatelessWidget {
   const ParkingLocationMapCard({
@@ -436,7 +435,7 @@ class _MapCanvasPainter extends CustomPainter {
       fontWeight: FontWeight.w700,
     );
 
-    _paintLabel(canvas, '\uB6DD\uC12C', size.width * 0.16, size.height * 0.53, labelStyle);
+    _paintLabel(canvas, '\uB69D\uC12C', size.width * 0.16, size.height * 0.53, labelStyle);
     _paintLabel(canvas, '\uC790\uC591\uB3D9', size.width * 0.69, size.height * 0.58, smallStyle);
     _paintLabel(canvas, '\uC131\uC218\uB300\uAD50', size.width * 0.28, size.height * 0.25, smallStyle, rotate: -0.12);
     _paintLabel(canvas, '\uC601\uB3D9\uB300\uAD50', size.width * 0.56, size.height * 0.26, smallStyle, rotate: 0.08);
@@ -572,12 +571,12 @@ class _SelectedLotInfo extends StatelessWidget {
           ? _InfoCard(
               key: const ValueKey('empty'),
               title: '\uC8FC\uCC28\uC7A5\uC744 \uC120\uD0DD\uD558\uC138\uC694',
-              subtitle: '\uC67C\uCABD \uCE74\uB4DC\uC5D0\uC11C 1~4\uBC88 \uC8FC\uCC28\uC7A5\uC744 \uB204\uB974\uBA74 \uC9C0\uB3C4 \uC911\uC559\uC73C\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4.',
+              subtitle: '\uAC80\uC0C9\uC5B4\uB97C \uC9C0\uC6B0\uAC70\uB098 \uC67C\uCABD \uCE74\uB4DC\uC5D0\uC11C \uC8FC\uCC28\uC7A5\uC744 \uC120\uD0DD\uD558\uC138\uC694.',
               palette: palette,
             )
           : _InfoCard(
-              key: ValueKey(ParkingLotLabels.forIndex(selectedIndex)),
-              title: ParkingLotLabels.forIndex(selectedIndex),
+              key: ValueKey(lot.name),
+              title: lot.name,
               subtitle:
                   '\uB0A8\uC740 ${lot.available}\uBA74 \u00B7 ${lot.latitude.toStringAsFixed(5)}, ${lot.longitude.toStringAsFixed(5)}',
               palette: palette,

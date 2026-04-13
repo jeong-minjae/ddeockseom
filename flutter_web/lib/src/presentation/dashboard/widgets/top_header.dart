@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../core/theme/dashboard_palette.dart';
+import '../view_models/dashboard_view_model.dart';
 
-class TopHeader extends StatelessWidget {
+class TopHeader extends GetView<DashboardViewModel> {
   const TopHeader({super.key});
 
   @override
@@ -21,6 +23,7 @@ class TopHeader extends StatelessWidget {
     final palette = context.palette;
 
     return TextField(
+      onChanged: controller.updateSearchQuery,
       decoration: InputDecoration(
         prefixIcon: const Icon(Icons.search_rounded),
         hintText: '\uC8FC\uCC28\uC7A5\uACFC \uC774\uB984\uC744 \uAC80\uC0C9\uD558\uC138\uC694.',

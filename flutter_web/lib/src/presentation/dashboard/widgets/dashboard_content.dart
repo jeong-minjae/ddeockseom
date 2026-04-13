@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../domain/models/dashboard_snapshot.dart';
 import '../view_models/dashboard_view_model.dart';
 import 'parking_location_map_card.dart';
 import 'widgets.dart';
@@ -25,28 +24,30 @@ class DashboardContent extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildTopSection(snapshot),
+          _buildTopSection(),
         ],
       );
     });
   }
 
-  Widget _buildTopSection(DashboardSnapshot snapshot) {
+  Widget _buildTopSection() {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Obx(() {
           final isWideScreen = constraints.maxWidth >= 1120;
+          final parkingLots = controller.filteredParkingLots;
           final selectedIndex = controller.selectedIndex;
-          final selectedLot = snapshot.parkingLots.isEmpty ? null : snapshot.parkingLots[selectedIndex];
+          final selectedLot =
+              parkingLots.isEmpty ? null : parkingLots[selectedIndex];
 
           final parkingCard = ParkingOverviewCard(
-            parkingLots: snapshot.parkingLots,
+            parkingLots: parkingLots,
             selectedIndex: selectedIndex,
             onParkingLotSelected: controller.selectParkingLot,
           );
 
           final mapCard = ParkingLocationMapCard(
-            parkingLots: snapshot.parkingLots,
+            parkingLots: parkingLots,
             selectedIndex: selectedIndex,
             onParkingLotSelected: controller.selectParkingLot,
             selectedLot: selectedLot,
@@ -80,5 +81,4 @@ class DashboardContent extends StatelessWidget {
       },
     );
   }
-
 }

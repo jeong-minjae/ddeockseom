@@ -32,7 +32,7 @@ class SidebarNavigation extends GetView<AppThemeController> {
             subtitle: 'Overview',
             isSelected: true,
           ),
-          const SizedBox(height: 10),
+          const Spacer(),
           _buildNavigationButton(
             context: context,
             icon: Icons.settings_rounded,
@@ -41,7 +41,7 @@ class SidebarNavigation extends GetView<AppThemeController> {
           ),
           const SizedBox(height: 12),
           _buildThemeSettingCard(context),
-          const Spacer(),
+          const SizedBox(height: 12),
           _buildManagerProfileCard(context),
         ],
       ),

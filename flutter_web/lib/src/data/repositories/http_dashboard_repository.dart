@@ -93,15 +93,15 @@ class HttpDashboardRepository implements DashboardRepository {
   String _nameForLot(int capacity) {
     switch (capacity) {
       case 64:
-        return '\uB6DD\uC12C \uC81C1 \uC8FC\uCC28\uC7A5';
+        return '\uB69D\uC12C \uC81C1 \uC8FC\uCC28\uC7A5';
       case 356:
-        return '\uB6DD\uC12C \uC81C2 \uC8FC\uCC28\uC7A5';
+        return '\uB69D\uC12C \uC81C2 \uC8FC\uCC28\uC7A5';
       case 123:
-        return '\uB6DD\uC12C \uC81C3 \uC8FC\uCC28\uC7A5';
+        return '\uB69D\uC12C \uC81C3 \uC8FC\uCC28\uC7A5';
       case 131:
-        return '\uB6DD\uC12C \uC81C4 \uC8FC\uCC28\uC7A5';
+        return '\uB69D\uC12C \uC81C4 \uC8FC\uCC28\uC7A5';
       default:
-        return '\uB6DD\uC12C';
+        return '\uB69D\uC12C';
     }
   }
 
@@ -159,7 +159,7 @@ class HttpDashboardRepository implements DashboardRepository {
 
   static const List<ParkingLot> _fallbackParkingLots = [
     ParkingLot(
-      name: '\uB6DD\uC12C \uC81C1 \uC8FC\uCC28\uC7A5',
+      name: '\uB69D\uC12C \uC81C1 \uC8FC\uCC28\uC7A5',
       occupied: 44,
       available: 20,
       capacity: 64,
@@ -170,7 +170,7 @@ class HttpDashboardRepository implements DashboardRepository {
       progressColor: Color(0xFFFFA726),
     ),
     ParkingLot(
-      name: '\uB6DD\uC12C \uC81C2 \uC8FC\uCC28\uC7A5',
+      name: '\uB69D\uC12C \uC81C2 \uC8FC\uCC28\uC7A5',
       occupied: 302,
       available: 54,
       capacity: 356,
@@ -181,7 +181,7 @@ class HttpDashboardRepository implements DashboardRepository {
       progressColor: Color(0xFFFF5A52),
     ),
     ParkingLot(
-      name: '\uB6DD\uC12C \uC81C3 \uC8FC\uCC28\uC7A5',
+      name: '\uB69D\uC12C \uC81C3 \uC8FC\uCC28\uC7A5',
       occupied: 88,
       available: 35,
       capacity: 123,
@@ -192,7 +192,7 @@ class HttpDashboardRepository implements DashboardRepository {
       progressColor: Color(0xFFFFA726),
     ),
     ParkingLot(
-      name: '\uB6DD\uC12C \uC81C4 \uC8FC\uCC28\uC7A5',
+      name: '\uB69D\uC12C \uC81C4 \uC8FC\uCC28\uC7A5',
       occupied: 87,
       available: 44,
       capacity: 131,
@@ -208,14 +208,14 @@ class HttpDashboardRepository implements DashboardRepository {
     ActivityLog(
       vehicleNumber: '12\uAC00 3456',
       type: '\uC785\uCC28',
-      location: '\uB6DD\uC12C \uC8FC\uCC28\uC7A5',
+      location: '\uB69D\uC12C \uC8FC\uCC28\uC7A5',
       time: '14:22:15',
       status: '\uC644\uB8CC',
     ),
     ActivityLog(
       vehicleNumber: '98\uB098 7654',
       type: '\uCD9C\uCC28',
-      location: '\uB6DD\uC12C \uC8FC\uCC28\uC7A5',
+      location: '\uB69D\uC12C \uC8FC\uCC28\uC7A5',
       time: '14:20:02',
       status: '\uC644\uB8CC',
     ),

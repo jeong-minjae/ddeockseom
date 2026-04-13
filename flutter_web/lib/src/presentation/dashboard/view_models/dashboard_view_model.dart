@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../../../domain/models/dashboard_snapshot.dart';
+import '../../../domain/models/parking_lot.dart';
 import '../../../domain/repositories/dashboard_repository.dart';
 
 class DashboardViewModel extends GetxController {
@@ -11,11 +12,27 @@ class DashboardViewModel extends GetxController {
   final RxBool isLoading = true.obs;
   final Rxn<DashboardSnapshot> dashboardSnapshot = Rxn<DashboardSnapshot>();
   final RxInt selectedParkingLotIndex = 0.obs;
+  final RxString searchQuery = ''.obs;
 
   DashboardSnapshot? get snapshot => dashboardSnapshot.value;
 
+  List<ParkingLot> get filteredParkingLots {
+    final lots = snapshot?.parkingLots ?? const <ParkingLot>[];
+    final query = _normalizeSearchText(searchQuery.value);
+
+    if (query.isEmpty) {
+      return lots;
+    }
+
+    return lots.where((lot) {
+      final name = _normalizeSearchText(lot.name);
+      final compactName = name.replaceAll('\uC81C', '');
+      return name.contains(query) || compactName.contains(query);
+    }).toList(growable: false);
+  }
+
   int get selectedIndex {
-    final lots = snapshot?.parkingLots ?? const [];
+    final lots = filteredParkingLots;
     if (lots.isEmpty) {
       return 0;
     }
@@ -29,12 +46,17 @@ class DashboardViewModel extends GetxController {
   }
 
   void selectParkingLot(int index) {
-    final lots = snapshot?.parkingLots ?? const [];
+    final lots = filteredParkingLots;
     if (index < 0 || index >= lots.length) {
       return;
     }
 
     selectedParkingLotIndex.value = index;
+  }
+
+  void updateSearchQuery(String value) {
+    searchQuery.value = value;
+    selectedParkingLotIndex.value = 0;
   }
 
   @override
@@ -46,7 +68,12 @@ class DashboardViewModel extends GetxController {
   Future<void> loadDashboard() async {
     isLoading.value = true;
     dashboardSnapshot.value = await _dashboardRepository.fetchDashboardSnapshot();
+    searchQuery.value = '';
     selectedParkingLotIndex.value = 0;
     isLoading.value = false;
+  }
+
+  String _normalizeSearchText(String value) {
+    return value.toLowerCase().replaceAll(RegExp(r'\s+'), '');
   }
 }
