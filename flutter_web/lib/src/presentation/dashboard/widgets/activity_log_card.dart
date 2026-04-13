@@ -114,7 +114,6 @@ class _ActivityLogHeader extends StatelessWidget {
         children: [
           Expanded(flex: 2, child: Text('\uBC88\uD638', style: headerStyle)),
           Expanded(child: Text('\uC720\uD615', style: headerStyle)),
-          Expanded(flex: 2, child: Text('\uC704\uCE58', style: headerStyle)),
           Expanded(child: Text('\uC2DC\uAC04', style: headerStyle)),
           Expanded(
             child: Text(
@@ -154,7 +153,6 @@ class _ActivityLogRow extends StatelessWidget {
             ),
           ),
           Expanded(child: Text(log.type)),
-          Expanded(flex: 2, child: Text(log.location)),
           Expanded(child: Text(log.time)),
           Expanded(
             child: Align(

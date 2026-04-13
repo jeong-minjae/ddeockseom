@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../core/theme/dashboard_palette.dart';
+import '../../app/controllers/app_theme_controller.dart';
 
-class SidebarNavigation extends StatelessWidget {
+class SidebarNavigation extends GetView<AppThemeController> {
   const SidebarNavigation({super.key});
 
   @override
@@ -37,9 +39,9 @@ class SidebarNavigation extends StatelessWidget {
             label: 'Settings',
             subtitle: 'Preferences',
           ),
+          const SizedBox(height: 12),
+          _buildThemeSettingCard(context),
           const Spacer(),
-          _buildQuickActionButton(context),
-          const SizedBox(height: 18),
           _buildManagerProfileCard(context),
         ],
       ),
@@ -111,42 +113,64 @@ class SidebarNavigation extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionButton(BuildContext context) {
+  Widget _buildThemeSettingCard(BuildContext context) {
     final palette = context.palette;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: LinearGradient(
-          colors: [palette.accentBlue, palette.accentCyan],
+    return Obx(() {
+      final isDarkMode = controller.isDarkMode;
+
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: palette.cardBackground,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: palette.cardBorder),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: palette.glowColor,
-            blurRadius: 18,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.flash_on_rounded, color: Colors.white, size: 18),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'Quick Monitor',
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isDarkMode ? palette.selectedItemBackground : palette.panelBackground,
+              ),
+              child: Icon(
+                isDarkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                size: 18,
+                color: isDarkMode ? palette.accentCyan : palette.accentBlue,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Dark Mode',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    isDarkMode ? 'Enabled' : 'Disabled',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: palette.mutedText,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+            Switch.adaptive(
+              value: isDarkMode,
+              onChanged: (_) => controller.toggleThemeMode(),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildManagerProfileCard(BuildContext context) {

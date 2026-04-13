@@ -16,7 +16,7 @@ class MockDashboardRepository implements DashboardRepository {
       lastUpdatedLabel: '\uB9C8\uC9C0\uB9C9 \uAC31\uC2E0: 2026-04-09 17:40',
       parkingLots: const [
         ParkingLot(
-          name: '\uB6DD\uC12C \uC81C1\uC8FC\uCC28\uC7A5',
+          name: '\uB6DD\uC12C \uC81C1 \uC8FC\uCC28\uC7A5',
           occupied: 44,
           available: 20,
           capacity: 64,
@@ -27,7 +27,7 @@ class MockDashboardRepository implements DashboardRepository {
           progressColor: Color(0xFFFFA726),
         ),
         ParkingLot(
-          name: '\uB6DD\uC12C \uC81C2\uC8FC\uCC28\uC7A5',
+          name: '\uB6DD\uC12C \uC81C2 \uC8FC\uCC28\uC7A5',
           occupied: 302,
           available: 54,
           capacity: 356,
@@ -38,7 +38,7 @@ class MockDashboardRepository implements DashboardRepository {
           progressColor: Color(0xFFFF5A52),
         ),
         ParkingLot(
-          name: '\uB6DD\uC12C \uC81C3\uC8FC\uCC28\uC7A5',
+          name: '\uB6DD\uC12C \uC81C3 \uC8FC\uCC28\uC7A5',
           occupied: 88,
           available: 35,
           capacity: 123,
@@ -49,7 +49,7 @@ class MockDashboardRepository implements DashboardRepository {
           progressColor: Color(0xFFFFA726),
         ),
         ParkingLot(
-          name: '\uB6DD\uC12C \uC81C4\uC8FC\uCC28\uC7A5',
+          name: '\uB6DD\uC12C \uC81C4 \uC8FC\uCC28\uC7A5',
           occupied: 87,
           available: 44,
           capacity: 131,
