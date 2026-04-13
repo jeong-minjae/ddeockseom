@@ -19,7 +19,7 @@ struct FacilityRecommendationView: View {
                 VStack(spacing: 18) {
                     header
 
-                    if viewModel.isLoading && viewModel.recommendations.isEmpty {
+                    if viewModel.isLoading && viewModel.displayRecommendations.isEmpty {
                         ProgressView("연관 추천 정보를 불러오는 중...")
                             .padding(24)
                             .frame(maxWidth: .infinity)
@@ -27,7 +27,7 @@ struct FacilityRecommendationView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
 
-                    ForEach(viewModel.recommendations) { facility in
+                    ForEach(viewModel.displayRecommendations) { facility in
                         FacilityRecommendationCard(facility: facility) {
                             selectedURL = facility.url
                         }
@@ -46,7 +46,7 @@ struct FacilityRecommendationView: View {
                 .padding(22)
             }
         }
-        .navigationTitle("근처 시설 예약하기")
+        .navigationTitle("연관 추천 정보")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $selectedURL) { url in
             SafariView(url: url)
@@ -63,7 +63,7 @@ struct FacilityRecommendationView: View {
                 .font(.largeTitle.weight(.bold))
                 .foregroundStyle(.white)
 
-            Text("뚝섬한강공원 X-게임장 페이지의 추천 정보를 가져옵니다.")
+            Text("뚝섬한강공원의 주변 추천 정보입니다.")
                 .font(.subheadline)
                 .foregroundStyle(.white.opacity(0.86))
         }
@@ -94,11 +94,13 @@ private struct FacilityRecommendationCard: View {
                             .font(.headline)
                             .foregroundStyle(Color(red: 0.12, green: 0.16, blue: 0.22))
                             .multilineTextAlignment(.leading)
+                            .lineLimit(2)
 
-                        Text(facility.description.isEmpty ? "상세 정보를 확인해보세요." : facility.description)
+                        Text(facility.displayDescription)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.leading)
+                            .lineLimit(2)
                     }
 
                     Spacer(minLength: 0)

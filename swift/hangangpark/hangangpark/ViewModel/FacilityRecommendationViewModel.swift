@@ -18,6 +18,10 @@ final class FacilityRecommendationViewModel: ObservableObject {
         self.apiClient = apiClient
     }
 
+    var displayRecommendations: [FacilityRecommendation] {
+        recommendations
+    }
+
     func loadRecommendations() async {
         guard !isLoading else { return }
 
