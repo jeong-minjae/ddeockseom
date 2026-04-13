@@ -27,7 +27,7 @@ class SidebarNavigation extends StatelessWidget {
             context: context,
             icon: Icons.dashboard_rounded,
             label: 'Dashboard',
-            subtitle: '통합 현황',
+            subtitle: 'Overview',
             isSelected: true,
           ),
           const SizedBox(height: 10),
@@ -35,7 +35,7 @@ class SidebarNavigation extends StatelessWidget {
             context: context,
             icon: Icons.settings_rounded,
             label: 'Settings',
-            subtitle: '환경 설정',
+            subtitle: 'Preferences',
           ),
           const Spacer(),
           _buildQuickActionButton(context),
@@ -76,6 +76,7 @@ class SidebarNavigation extends StatelessWidget {
             children: [
               Text(
                 'ParkFlow',
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w900,
                       color: palette.primaryText,
@@ -83,6 +84,7 @@ class SidebarNavigation extends StatelessWidget {
               ),
               Text(
                 'Integrated Control',
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: palette.mutedText,
                     ),
@@ -132,12 +134,15 @@ class SidebarNavigation extends StatelessWidget {
         children: [
           const Icon(Icons.flash_on_rounded, color: Colors.white, size: 18),
           const SizedBox(width: 10),
-          Text(
-            'Quick Monitor',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                ),
+          Expanded(
+            child: Text(
+              'Quick Monitor',
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
           ),
         ],
       ),
@@ -167,7 +172,7 @@ class SidebarNavigation extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: Text(
-              '김',
+              'K',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w800,
@@ -180,13 +185,15 @@ class SidebarNavigation extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '김관리 소장',
+                  'Kim Admin',
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                 ),
                 Text(
-                  '통합관제 총괄',
+                  'Control Lead',
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: palette.mutedText,
                       ),
@@ -240,12 +247,14 @@ class _NavigationButton extends StatelessWidget {
               children: [
                 Text(
                   label,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: isSelected ? palette.primaryText : palette.secondaryText,
                       ),
                 ),
                 Text(
                   subtitle,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: palette.mutedText,
                       ),

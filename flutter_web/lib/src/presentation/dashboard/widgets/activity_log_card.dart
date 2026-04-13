@@ -45,7 +45,7 @@ class ActivityLogCard extends StatelessWidget {
     return Row(
       children: [
         Text(
-          '실시간 시스템 로그',
+          '\uC2E4\uC2DC\uAC04 \uD1B5\uD569 \uC774\uB825',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const Spacer(),
@@ -112,13 +112,13 @@ class _ActivityLogHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
         children: [
-          Expanded(flex: 2, child: Text('차량 번호', style: headerStyle)),
-          Expanded(child: Text('구분', style: headerStyle)),
-          Expanded(flex: 2, child: Text('위치', style: headerStyle)),
-          Expanded(child: Text('시간', style: headerStyle)),
+          Expanded(flex: 2, child: Text('\uBC88\uD638', style: headerStyle)),
+          Expanded(child: Text('\uC720\uD615', style: headerStyle)),
+          Expanded(flex: 2, child: Text('\uC704\uCE58', style: headerStyle)),
+          Expanded(child: Text('\uC2DC\uAC04', style: headerStyle)),
           Expanded(
             child: Text(
-              '상태',
+              '\uC0C1\uD0DC',
               style: headerStyle,
               textAlign: TextAlign.right,
             ),
@@ -137,7 +137,8 @@ class _ActivityLogRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
-    final statusColor = log.status == '완료' ? palette.accentBlue : const Color(0xFFF59E0B);
+    final statusColor =
+        log.status == '\uC644\uB8CC' ? palette.accentBlue : const Color(0xFFF59E0B);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),

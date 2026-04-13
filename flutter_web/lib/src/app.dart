@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 
 import 'core/theme/app_theme.dart';
 import 'presentation/app/bindings/app_binding.dart';
+import 'presentation/auth/auth_routes.dart';
+import 'presentation/auth/login/login_page.dart';
+import 'presentation/auth/signup/signup_page.dart';
 import 'presentation/dashboard/dashboard_page.dart';
 
 void bootstrap() {
@@ -21,7 +24,13 @@ class ParkFlowApp extends StatelessWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.light,
-      home: const DashboardPage(),
+      initialRoute: AuthRoutes.login,
+      getPages: [
+        GetPage(name: AuthRoutes.login, page: () => const LoginPage()),
+        GetPage(name: AuthRoutes.signup, page: () => const SignupPage()),
+        GetPage(name: AuthRoutes.dashboard, page: () => const DashboardPage()),
+      ],
+      unknownRoute: GetPage(name: AuthRoutes.login, page: () => const LoginPage()),
     );
   }
 }
