@@ -71,19 +71,6 @@ class _SystemStatusTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: palette.selectedItemBackground,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(
-              status.icon,
-              color: palette.accentCyan,
-            ),
-          ),
-          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

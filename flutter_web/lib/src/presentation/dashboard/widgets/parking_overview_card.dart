@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/dashboard_palette.dart';
 import '../../../domain/models/parking_lot.dart';
+import '../../../domain/models/parking_lot_labels.dart';
 
 class ParkingOverviewCard extends StatelessWidget {
   const ParkingOverviewCard({
@@ -80,6 +81,7 @@ class ParkingOverviewCard extends StatelessWidget {
           ),
           itemBuilder: (context, index) {
             return _ParkingLotTile(
+              index: index,
               lot: parkingLots[index],
               isSelected: index == selectedIndex,
               onTap: () => onParkingLotSelected(index),
@@ -93,11 +95,13 @@ class ParkingOverviewCard extends StatelessWidget {
 
 class _ParkingLotTile extends StatelessWidget {
   const _ParkingLotTile({
+    required this.index,
     required this.lot,
     required this.isSelected,
     required this.onTap,
   });
 
+  final int index;
   final ParkingLot lot;
   final bool isSelected;
   final VoidCallback onTap;
@@ -186,7 +190,7 @@ class _ParkingLotTile extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            lot.name,
+            ParkingLotLabels.forIndex(index),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: palette.secondaryText,
                   fontWeight: FontWeight.w700,

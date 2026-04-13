@@ -44,20 +44,10 @@ def _to_int(value: Any) -> int:
         return 0
 
 
-def _lot_name_by_capacity(total: int) -> str:
-    name_by_capacity = {
-        64: "\uB6DD\uC12C \uC81C1\uC8FC\uCC28\uC7A5",
-        356: "\uB6DD\uC12C \uC81C2\uC8FC\uCC28\uC7A5",
-        123: "\uB6DD\uC12C \uC81C3\uC8FC\uCC28\uC7A5",
-        131: "\uB6DD\uC12C \uC81C4\uC8FC\uCC28\uC7A5",
-    }
-    return name_by_capacity.get(total, "\uB6DD\uC12C \uC8FC\uCC28\uC7A5")
-
-
 def _fallback_rows() -> list[dict[str, Any]]:
     return [
         {
-            "parkinglotname": "\uB6DD\uC12C \uC81C1\uC8FC\uCC28\uC7A5",
+            "parkinglotname": "\uB6DD\uC12C \uC81C1 \uC8FC\uCC28\uC7A5",
             "address": "",
             "available": 20,
             "capacity": 64,
@@ -68,7 +58,7 @@ def _fallback_rows() -> list[dict[str, Any]]:
             "longitude": 127.0781632,
         },
         {
-            "parkinglotname": "\uB6DD\uC12C \uC81C2\uC8FC\uCC28\uC7A5",
+            "parkinglotname": "\uB6DD\uC12C \uC81C2 \uC8FC\uCC28\uC7A5",
             "address": "",
             "available": 54,
             "capacity": 356,
@@ -79,7 +69,7 @@ def _fallback_rows() -> list[dict[str, Any]]:
             "longitude": 127.0735242,
         },
         {
-            "parkinglotname": "\uB6DD\uC12C \uC81C3\uC8FC\uCC28\uC7A5",
+            "parkinglotname": "\uB6DD\uC12C \uC81C3 \uC8FC\uCC28\uC7A5",
             "address": "",
             "available": 35,
             "capacity": 123,
@@ -90,7 +80,7 @@ def _fallback_rows() -> list[dict[str, Any]]:
             "longitude": 127.0673524,
         },
         {
-            "parkinglotname": "\uB6DD\uC12C \uC81C4\uC8FC\uCC28\uC7A5",
+            "parkinglotname": "\uB6DD\uC12C \uC81C4 \uC8FC\uCC28\uC7A5",
             "address": "",
             "available": 44,
             "capacity": 131,
@@ -171,13 +161,16 @@ def crawl_live_parkinglots() -> list[dict[str, Any]]:
 
     items: list[dict[str, Any]] = []
     for row in rows:
+        name = _extract_text(row, 'normalize-space(./td[1]/span)')
         address = _extract_text(row, 'normalize-space(./td[2]/span)')
         available = max(_to_int(_extract_text(row, 'normalize-space(./td[4]/span)')), 0)
         total = max(_to_int(_extract_text(row, 'normalize-space(./td[5]/span)')), 0)
         occupied = max(total - available, 0)
         occupancy_rate = occupied / total if total else 0.0
-        name = _lot_name_by_capacity(total)
         latitude, longitude = _extract_lat_lng(row)
+
+        if not name:
+            name = "\uB6DD\uC12C"
 
         items.append(
             {

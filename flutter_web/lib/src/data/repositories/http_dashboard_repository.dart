@@ -93,15 +93,15 @@ class HttpDashboardRepository implements DashboardRepository {
   String _nameForLot(int capacity) {
     switch (capacity) {
       case 64:
-        return '\uB6DD\uC12C \uC81C1\uC8FC\uCC28\uC7A5';
+        return '\uB6DD\uC12C \uC81C1 \uC8FC\uCC28\uC7A5';
       case 356:
-        return '\uB6DD\uC12C \uC81C2\uC8FC\uCC28\uC7A5';
+        return '\uB6DD\uC12C \uC81C2 \uC8FC\uCC28\uC7A5';
       case 123:
-        return '\uB6DD\uC12C \uC81C3\uC8FC\uCC28\uC7A5';
+        return '\uB6DD\uC12C \uC81C3 \uC8FC\uCC28\uC7A5';
       case 131:
-        return '\uB6DD\uC12C \uC81C4\uC8FC\uCC28\uC7A5';
+        return '\uB6DD\uC12C \uC81C4 \uC8FC\uCC28\uC7A5';
       default:
-        return '\uB6DD\uC12C \uC8FC\uCC28\uC7A5';
+        return '\uB6DD\uC12C';
     }
   }
 
@@ -159,7 +159,7 @@ class HttpDashboardRepository implements DashboardRepository {
 
   static const List<ParkingLot> _fallbackParkingLots = [
     ParkingLot(
-      name: '\uB6DD\uC12C \uC81C1\uC8FC\uCC28\uC7A5',
+      name: '\uB6DD\uC12C \uC81C1 \uC8FC\uCC28\uC7A5',
       occupied: 44,
       available: 20,
       capacity: 64,
@@ -170,7 +170,7 @@ class HttpDashboardRepository implements DashboardRepository {
       progressColor: Color(0xFFFFA726),
     ),
     ParkingLot(
-      name: '\uB6DD\uC12C \uC81C2\uC8FC\uCC28\uC7A5',
+      name: '\uB6DD\uC12C \uC81C2 \uC8FC\uCC28\uC7A5',
       occupied: 302,
       available: 54,
       capacity: 356,
@@ -181,7 +181,7 @@ class HttpDashboardRepository implements DashboardRepository {
       progressColor: Color(0xFFFF5A52),
     ),
     ParkingLot(
-      name: '\uB6DD\uC12C \uC81C3\uC8FC\uCC28\uC7A5',
+      name: '\uB6DD\uC12C \uC81C3 \uC8FC\uCC28\uC7A5',
       occupied: 88,
       available: 35,
       capacity: 123,
@@ -192,7 +192,7 @@ class HttpDashboardRepository implements DashboardRepository {
       progressColor: Color(0xFFFFA726),
     ),
     ParkingLot(
-      name: '\uB6DD\uC12C \uC81C4\uC8FC\uCC28\uC7A5',
+      name: '\uB6DD\uC12C \uC81C4 \uC8FC\uCC28\uC7A5',
       occupied: 87,
       available: 44,
       capacity: 131,
