@@ -1,32 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../domain/models/dashboard_snapshot.dart';
+import '../view_models/dashboard_view_model.dart';
+import 'parking_location_map_card.dart';
 import 'widgets.dart';
 
 class DashboardContent extends StatelessWidget {
   const DashboardContent({
     super.key,
-    required this.snapshot,
+    required this.controller,
   });
 
-  final DashboardSnapshot snapshot;
+  final DashboardViewModel controller;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildTopSection(),
-        const SizedBox(height: 20),
-        _buildBottomSection(),
-      ],
-    );
+    return Obx(() {
+      final snapshot = controller.snapshot;
+      if (snapshot == null) {
+        return const SizedBox.shrink();
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTopSection(snapshot),
+          const SizedBox(height: 20),
+          _buildBottomSection(snapshot),
+        ],
+      );
+    });
   }
 
-  Widget _buildTopSection() {
+  Widget _buildTopSection(DashboardSnapshot snapshot) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWideScreen = constraints.maxWidth >= 1120;
+        final selectedLot = snapshot.parkingLots.isEmpty
+            ? null
+            : snapshot.parkingLots[controller.selectedIndex];
+
+        final parkingCard = Obx(
+          () => ParkingOverviewCard(
+            parkingLots: snapshot.parkingLots,
+            selectedIndex: controller.selectedIndex,
+            onParkingLotSelected: controller.selectParkingLot,
+          ),
+        );
+
+        final mapCard = ParkingLocationMapCard(
+          parkingLots: snapshot.parkingLots,
+          selectedIndex: controller.selectedIndex,
+          onParkingLotSelected: controller.selectParkingLot,
+          selectedLot: selectedLot,
+        );
 
         if (isWideScreen) {
           return Row(
@@ -34,16 +62,12 @@ class DashboardContent extends StatelessWidget {
             children: [
               Expanded(
                 flex: 3,
-                child: ParkingOverviewCard(
-                  parkingLots: snapshot.parkingLots,
-                ),
+                child: parkingCard,
               ),
               const SizedBox(width: 20),
               Expanded(
                 flex: 2,
-                child: UsageChartCard(
-                  weekdayStats: snapshot.weekdayStats,
-                ),
+                child: mapCard,
               ),
             ],
           );
@@ -51,16 +75,16 @@ class DashboardContent extends StatelessWidget {
 
         return Column(
           children: [
-            ParkingOverviewCard(parkingLots: snapshot.parkingLots),
+            parkingCard,
             const SizedBox(height: 18),
-            UsageChartCard(weekdayStats: snapshot.weekdayStats),
+            mapCard,
           ],
         );
       },
     );
   }
 
-  Widget _buildBottomSection() {
+  Widget _buildBottomSection(DashboardSnapshot snapshot) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWideScreen = constraints.maxWidth >= 1120;

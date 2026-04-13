@@ -19,7 +19,7 @@ class DashboardPage extends GetView<DashboardViewModel> {
 
           return DashboardShell(
             child: DashboardContent(
-              snapshot: controller.dashboardSnapshot.value!,
+              controller: controller,
             ),
           );
         }),

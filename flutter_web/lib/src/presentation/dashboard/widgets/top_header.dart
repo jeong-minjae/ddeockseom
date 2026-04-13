@@ -9,8 +9,6 @@ class TopHeader extends GetView<AppThemeController> {
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.palette;
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 22, 24, 10),
       child: Row(
@@ -22,7 +20,7 @@ class TopHeader extends GetView<AppThemeController> {
           _HeaderActionButton(
             icon: Icons.account_circle_outlined,
             onTap: () {},
-            tooltip: '관리자 프로필',
+            tooltip: '\uC5B4\uCE74\uC6B4\uD2B8 \uC815\uBCF4',
           ),
         ],
       ),
@@ -41,7 +39,7 @@ class TopHeader extends GetView<AppThemeController> {
               : Icons.notifications_none_rounded,
           onTap: controller.toggleThemeMode,
           isActive: isDarkMode,
-          tooltip: '테마 전환',
+          tooltip: '\uD14C\uB9C8 \uC804\uD658',
         ),
         const SizedBox(width: 12),
         Container(
@@ -49,7 +47,9 @@ class TopHeader extends GetView<AppThemeController> {
           decoration: BoxDecoration(
             color: palette.iconBackground,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: isDarkMode ? palette.accentCyan : palette.iconBorder),
+            border: Border.all(
+              color: isDarkMode ? palette.accentCyan : palette.iconBorder,
+            ),
             boxShadow: [
               BoxShadow(
                 color: isDarkMode ? palette.glowColor : Colors.transparent,
@@ -61,10 +61,10 @@ class TopHeader extends GetView<AppThemeController> {
           child: Text(
             isDarkMode ? 'NIGHT MODE' : 'DAY MODE',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: isDarkMode ? palette.accentCyan : palette.accentBlue,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.6,
-                ),
+              color: isDarkMode ? palette.accentCyan : palette.accentBlue,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.6,
+            ),
           ),
         ),
       ],
@@ -77,7 +77,7 @@ class TopHeader extends GetView<AppThemeController> {
     return TextField(
       decoration: InputDecoration(
         prefixIcon: const Icon(Icons.search_rounded),
-        hintText: '주차장 번호 또는 차량번호 검색...',
+        hintText: '\uC8FC\uCC28\uC7A5\uACFC \uC774\uB984\uC744 \uAC80\uC0C9\uD558\uC138\uC694.',
         constraints: const BoxConstraints(maxWidth: 380),
         suffixIcon: Container(
           margin: const EdgeInsets.all(8),
@@ -85,11 +85,7 @@ class TopHeader extends GetView<AppThemeController> {
             color: palette.panelBackground,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            Icons.tune_rounded,
-            size: 20,
-            color: palette.mutedText,
-          ),
+          child: Icon(Icons.tune_rounded, size: 20, color: palette.mutedText),
         ),
       ),
     );
@@ -122,7 +118,9 @@ class _HeaderActionButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           child: Ink(
             decoration: BoxDecoration(
-              color: isActive ? palette.selectedItemBackground : palette.iconBackground,
+              color: isActive
+                  ? palette.selectedItemBackground
+                  : palette.iconBackground,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isActive ? palette.accentCyan : palette.iconBorder,
