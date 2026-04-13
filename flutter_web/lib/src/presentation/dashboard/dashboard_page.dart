@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'view_models/dashboard_view_model.dart';
 import 'widgets/dashboard_content.dart';
 import 'widgets/dashboard_shell.dart';
+import 'notices/notices_page.dart';
 
 class DashboardPage extends GetView<DashboardViewModel> {
   const DashboardPage({super.key});
@@ -18,13 +19,40 @@ class DashboardPage extends GetView<DashboardViewModel> {
           }
 
           return DashboardShell(
-            childBuilder: (scrollOffset) => DashboardContent(
-              controller: controller,
-              scrollOffset: scrollOffset,
-            ),
+            childBuilder: (scrollOffset) {
+              return Obx(() {
+                final section = controller.currentSection.value;
+                final index = switch (section) {
+                  DashboardSection.dashboard => 0,
+                  DashboardSection.notices => 1,
+                  DashboardSection.settings => 2,
+                };
+
+                return IndexedStack(
+                  index: index,
+                  children: [
+                    DashboardContent(
+                      controller: controller,
+                      scrollOffset: scrollOffset,
+                    ),
+                    const NoticesPage(),
+                    const _SettingsPlaceholder(),
+                  ],
+                );
+              });
+            },
           );
         }),
       ),
     );
+  }
+}
+
+class _SettingsPlaceholder extends StatelessWidget {
+  const _SettingsPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox.shrink();
   }
 }

@@ -4,6 +4,12 @@ import '../../../domain/models/dashboard_snapshot.dart';
 import '../../../domain/models/parking_lot.dart';
 import '../../../domain/repositories/dashboard_repository.dart';
 
+enum DashboardSection {
+  dashboard,
+  notices,
+  settings,
+}
+
 class DashboardViewModel extends GetxController {
   DashboardViewModel(this._dashboardRepository);
 
@@ -13,6 +19,8 @@ class DashboardViewModel extends GetxController {
   final Rxn<DashboardSnapshot> dashboardSnapshot = Rxn<DashboardSnapshot>();
   final RxInt selectedParkingLotIndex = 0.obs;
   final RxString searchQuery = ''.obs;
+  final RxString noticeSearchQuery = ''.obs;
+  final Rx<DashboardSection> currentSection = DashboardSection.dashboard.obs;
 
   DashboardSnapshot? get snapshot => dashboardSnapshot.value;
 
@@ -68,6 +76,14 @@ class DashboardViewModel extends GetxController {
     selectedParkingLotIndex.value = 0;
   }
 
+  void updateNoticeSearchQuery(String value) {
+    noticeSearchQuery.value = value;
+  }
+
+  void selectSection(DashboardSection section) {
+    currentSection.value = section;
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -78,6 +94,7 @@ class DashboardViewModel extends GetxController {
     isLoading.value = true;
     dashboardSnapshot.value = await _dashboardRepository.fetchDashboardSnapshot();
     searchQuery.value = '';
+    noticeSearchQuery.value = '';
     selectedParkingLotIndex.value = 0;
     isLoading.value = false;
   }

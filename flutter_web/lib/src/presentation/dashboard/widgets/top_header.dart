@@ -9,24 +9,32 @@ class TopHeader extends GetView<DashboardViewModel> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 22, 24, 10),
-      child: Row(
-        children: [
-          Expanded(child: _buildSearchField(context)),
-        ],
-      ),
-    );
+    return Obx(() {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(24, 22, 24, 10),
+        child: Row(
+          children: [
+            Expanded(child: _buildSearchField(context)),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildSearchField(BuildContext context) {
     final palette = context.palette;
+    final section = controller.currentSection.value;
+    final isNotice = section == DashboardSection.notices;
 
     return TextField(
-      onChanged: controller.updateSearchQuery,
+      onChanged: isNotice
+          ? controller.updateNoticeSearchQuery
+          : controller.updateSearchQuery,
       decoration: InputDecoration(
         prefixIcon: const Icon(Icons.search_rounded),
-        hintText: '\uC8FC\uCC28\uC7A5\uACFC \uC774\uB984\uC744 \uAC80\uC0C9\uD558\uC138\uC694.',
+        hintText: isNotice
+            ? '\uACF5\uC9C0\uC0AC\uD56D \uC81C\uBAA9\uC744 \uAC80\uC0C9\uD558\uC138\uC694.'
+            : '\uC8FC\uCC28\uC7A5\uACFC \uC774\uB984\uC744 \uAC80\uC0C9\uD558\uC138\uC694.',
         constraints: const BoxConstraints(maxWidth: 380),
         suffixIcon: Container(
           margin: const EdgeInsets.all(8),
