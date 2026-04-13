@@ -9,11 +9,15 @@ class ParkingOverviewCard extends StatelessWidget {
     required this.parkingLots,
     required this.selectedIndex,
     required this.onParkingLotSelected,
+    required this.selectedLot,
+    required this.onDetailPressed,
   });
 
   final List<ParkingLot> parkingLots;
   final int selectedIndex;
   final ValueChanged<int> onParkingLotSelected;
+  final ParkingLot? selectedLot;
+  final VoidCallback? onDetailPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +60,7 @@ class ParkingOverviewCard extends StatelessWidget {
           ),
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: selectedLot == null ? null : onDetailPressed,
           child: const Text('\uC0C1\uC138\uBCF4\uAE30'),
         ),
       ],
