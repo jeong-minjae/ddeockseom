@@ -39,63 +39,53 @@ def _status_label(occupancy_rate: float) -> str:
 
 def _to_int(value: Any) -> int:
     try:
-        return int(value)
+        return int(str(value).replace(",", "").strip())
     except Exception:
         return 0
-
-
-def _lot_name_by_capacity(total: int) -> str:
-    name_by_capacity = {
-        64: "\uB6DD\uC12C \uC81C1\uC8FC\uCC28\uC7A5",
-        356: "\uB6DD\uC12C \uC81C2\uC8FC\uCC28\uC7A5",
-        123: "\uB6DD\uC12C \uC81C3\uC8FC\uCC28\uC7A5",
-        131: "\uB6DD\uC12C \uC81C4\uC8FC\uCC28\uC7A5",
-    }
-    return name_by_capacity.get(total, "\uB6DD\uC12C \uC8FC\uCC28\uC7A5")
 
 
 def _fallback_rows() -> list[dict[str, Any]]:
     return [
         {
-            "parkinglotname": "\uB6DD\uC12C \uC81C1\uC8FC\uCC28\uC7A5",
-            "address": "",
-            "available": 20,
+            "parkinglotname": "\uB6DD\uC12C1\uC8FC\uCC28\uC7A5",
+            "address": "\uC11C\uC6B8  \uAD11\uC9C4\uAD6C \uC790\uC591\uB3D9 409",
+            "available": 35,
             "capacity": 64,
-            "occupied": 44,
-            "occupancy_rate": 44 / 64,
-            "status_label": "\uBCF4\uD1B5",
+            "occupied": 29,
+            "occupancy_rate": 29 / 64,
+            "status_label": "\uC6D0\uD65C",
             "latitude": 37.5276908,
             "longitude": 127.0781632,
         },
         {
-            "parkinglotname": "\uB6DD\uC12C \uC81C2\uC8FC\uCC28\uC7A5",
-            "address": "",
-            "available": 54,
+            "parkinglotname": "\uB6DD\uC12C2\uC8FC\uCC28\uC7A5",
+            "address": "\uC11C\uC6B8  \uAD11\uC9C4\uAD6C \uC790\uC591\uB3D9 427-1",
+            "available": 226,
             "capacity": 356,
-            "occupied": 302,
-            "occupancy_rate": 302 / 356,
-            "status_label": "\uD63C\uC7A1",
+            "occupied": 130,
+            "occupancy_rate": 130 / 356,
+            "status_label": "\uC6D0\uD65C",
             "latitude": 37.5290757,
             "longitude": 127.0735242,
         },
         {
-            "parkinglotname": "\uB6DD\uC12C \uC81C3\uC8FC\uCC28\uC7A5",
-            "address": "",
-            "available": 35,
+            "parkinglotname": "\uB6DD\uC12C3\uC8FC\uCC28\uC7A5",
+            "address": "\uC11C\uC6B8  \uAD11\uC9C4\uAD6C \uC790\uC591\uB3D9 97-5",
+            "available": 47,
             "capacity": 123,
-            "occupied": 88,
-            "occupancy_rate": 88 / 123,
+            "occupied": 76,
+            "occupancy_rate": 76 / 123,
             "status_label": "\uBCF4\uD1B5",
             "latitude": 37.5306712,
             "longitude": 127.0673524,
         },
         {
-            "parkinglotname": "\uB6DD\uC12C \uC81C4\uC8FC\uCC28\uC7A5",
-            "address": "",
-            "available": 44,
+            "parkinglotname": "\uB6DD\uC12C4\uC8FC\uCC28\uC7A5",
+            "address": "\uC11C\uC6B8  \uAD11\uC9C4\uAD6C \uC790\uC591\uB3D9 97-5",
+            "available": 46,
             "capacity": 131,
-            "occupied": 87,
-            "occupancy_rate": 87 / 131,
+            "occupied": 85,
+            "occupancy_rate": 85 / 131,
             "status_label": "\uBCF4\uD1B5",
             "latitude": 37.5314716,
             "longitude": 127.0644017,
@@ -171,13 +161,16 @@ def crawl_live_parkinglots() -> list[dict[str, Any]]:
 
     items: list[dict[str, Any]] = []
     for row in rows:
+        name = _extract_text(row, 'normalize-space(./td[1]/span)')
         address = _extract_text(row, 'normalize-space(./td[2]/span)')
         available = max(_to_int(_extract_text(row, 'normalize-space(./td[4]/span)')), 0)
         total = max(_to_int(_extract_text(row, 'normalize-space(./td[5]/span)')), 0)
         occupied = max(total - available, 0)
         occupancy_rate = occupied / total if total else 0.0
-        name = _lot_name_by_capacity(total)
         latitude, longitude = _extract_lat_lng(row)
+
+        if not name or total <= 0:
+            continue
 
         items.append(
             {
