@@ -16,10 +16,12 @@ def connect():
 
 
 def hash_password(password: str) -> str:
-    return hashlib.sha1(password.encode("utf-8")).hexdigest()
+    return hashlib.sha1(password.strip().encode("utf-8")).hexdigest()
 
 
 def verify_password(password: str, stored_password: str) -> bool:
+    password = password.strip()
+    stored_password = str(stored_password).strip()
     return hash_password(password) == stored_password or password == stored_password
 
 
