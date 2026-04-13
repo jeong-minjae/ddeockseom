@@ -22,12 +22,12 @@ class SystemStatusCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '시스템 상태',
+              '\uC2DC\uC2A4\uD15C \uC0C1\uD0DC',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 4),
             Text(
-              '센서와 장비의 연결 상태를 확인합니다.',
+              '\uC13C\uC11C, CCTV, \uB124\uD2B8\uC6CC\uD06C \uC5F0\uACB0 \uC0C1\uD0DC\uB97C \uD55C\uB208\uC5D0 \uD655\uC778\uD558\uC138\uC694.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: palette.mutedText,
                   ),
@@ -41,7 +41,7 @@ class SystemStatusCard extends StatelessWidget {
                 onPressed: () {},
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
-                  child: Text('시스템 점검 실행'),
+                  child: Text('\uC2DC\uC2A4\uD15C \uC0C1\uD0DC \uC790\uC138\uD788 \uBCF4\uAE30'),
                 ),
               ),
             ),
@@ -71,19 +71,6 @@ class _SystemStatusTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: palette.selectedItemBackground,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(
-              status.icon,
-              color: palette.accentCyan,
-            ),
-          ),
-          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +91,7 @@ class _SystemStatusTile extends StatelessWidget {
             ),
           ),
           Text(
-            status.isHealthy ? '정상' : '점검 필요',
+            status.isHealthy ? '\uC815\uC0C1' : '\uC5D0\uB7EC',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: status.isHealthy ? palette.accentGreen : palette.accentRed,
                   fontWeight: FontWeight.w800,

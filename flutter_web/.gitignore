@@ -33,6 +33,13 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Firebase local configuration
+firebase.json
+firebase-debug.log
+lib/firebase_options.dart
+**/*serviceAccountKey*.json
+**/serviceAccountKey.json
+
 # Symbolication related
 app.*.symbols
 

@@ -4,10 +4,7 @@ import '../../../core/theme/dashboard_palette.dart';
 import '../../../domain/models/weekday_stat.dart';
 
 class UsageChartCard extends StatelessWidget {
-  const UsageChartCard({
-    super.key,
-    required this.weekdayStats,
-  });
+  const UsageChartCard({super.key, required this.weekdayStats});
 
   final List<WeekdayStat> weekdayStats;
 
@@ -16,7 +13,10 @@ class UsageChartCard extends StatelessWidget {
     final palette = context.palette;
     final highestUsage = weekdayStats
         .map((weekdayStat) => weekdayStat.value)
-        .fold<double>(0, (previous, value) => value > previous ? value : previous);
+        .fold<double>(
+          0,
+          (previous, value) => value > previous ? value : previous,
+        );
 
     return Card(
       child: Padding(
@@ -25,12 +25,12 @@ class UsageChartCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '주간 이용 트렌드',
+              '\uC8FC\uAC04 \uC774\uC6A9 \uD604\uD669',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 4),
             Text(
-              '최근 요일별 평균 이용량 추이를 나타냅니다.',
+              '\uD68C\uC6D4\uBCC4 \uC0AC\uC6A9 \uD328\uD134\uC744 \uD55C\uB208\uC5D0 \uD655\uC778\uD558\uC138\uC694.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: palette.mutedText,
                   ),
@@ -60,9 +60,9 @@ class UsageChartCard extends StatelessWidget {
               text: TextSpan(
                 style: Theme.of(context).textTheme.bodyMedium,
                 children: [
-                  const TextSpan(text: '최근 7일 평균 대비 '),
+                  const TextSpan(text: '\uC8FC\uAC04 7\uC77C \uD3C9\uADE0 \uC774\uC6A9\uB7C9 '),
                   TextSpan(
-                    text: '12.4% 상승',
+                    text: '12.4% \uC99D\uAC00',
                     style: TextStyle(
                       color: palette.accentCyan,
                       fontWeight: FontWeight.w800,
@@ -79,10 +79,7 @@ class UsageChartCard extends StatelessWidget {
 }
 
 class _UsageBar extends StatelessWidget {
-  const _UsageBar({
-    required this.weekdayStat,
-    required this.highestUsage,
-  });
+  const _UsageBar({required this.weekdayStat, required this.highestUsage});
 
   final WeekdayStat weekdayStat;
   final double highestUsage;
@@ -90,7 +87,8 @@ class _UsageBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
-    final usageRatio = highestUsage == 0 ? 0.0 : weekdayStat.value / highestUsage;
+    final usageRatio =
+        highestUsage == 0 ? 0.0 : weekdayStat.value / highestUsage;
     final isPeakDay = weekdayStat.value == highestUsage;
     final barColors = isPeakDay
         ? [palette.accentCyan, palette.accentBlue]

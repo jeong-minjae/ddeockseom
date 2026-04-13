@@ -4,13 +4,20 @@ import '../../../core/theme/dashboard_palette.dart';
 import 'sidebar_navigation.dart';
 import 'top_header.dart';
 
-class DashboardShell extends StatelessWidget {
+class DashboardShell extends StatefulWidget {
   const DashboardShell({
     super.key,
-    required this.child,
+    required this.childBuilder,
   });
 
-  final Widget child;
+  final Widget Function(double scrollOffset) childBuilder;
+
+  @override
+  State<DashboardShell> createState() => _DashboardShellState();
+}
+
+class _DashboardShellState extends State<DashboardShell> {
+  double _scrollOffset = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +46,20 @@ class DashboardShell extends StatelessWidget {
                   children: [
                     const TopHeader(),
                     Expanded(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-                        child: child,
+                      child: NotificationListener<ScrollNotification>(
+                        onNotification: (notification) {
+                          if (notification.metrics.axis == Axis.vertical &&
+                              notification.metrics.pixels != _scrollOffset) {
+                            setState(() {
+                              _scrollOffset = notification.metrics.pixels;
+                            });
+                          }
+                          return false;
+                        },
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                          child: widget.childBuilder(_scrollOffset),
+                        ),
                       ),
                     ),
                   ],

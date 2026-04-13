@@ -186,3 +186,18 @@ app.*.map.json
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+# Swift / Xcode
+.build/
+DerivedData/
+*.xcworkspace
+*.xcuserdata
+*.xcuserstate
+Packages/
+Package.resolved
+Pods/
+Carthage/Build/
+*.xcarchive
+.swiftpm/
+
+# Firebase (iOS)
+GoogleService-Info.plist

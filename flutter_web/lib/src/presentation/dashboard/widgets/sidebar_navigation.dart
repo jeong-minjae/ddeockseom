@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../core/theme/dashboard_palette.dart';
+import '../../app/controllers/app_theme_controller.dart';
+import '../view_models/dashboard_view_model.dart';
 
 class SidebarNavigation extends StatelessWidget {
   const SidebarNavigation({super.key});
@@ -8,6 +11,8 @@ class SidebarNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final themeController = Get.find<AppThemeController>();
+    final dashboardController = Get.find<DashboardViewModel>();
 
     return Container(
       width: 248,
@@ -23,23 +28,42 @@ class SidebarNavigation extends StatelessWidget {
         children: [
           _buildBrandSection(context),
           const SizedBox(height: 28),
-          _buildNavigationButton(
-            context: context,
-            icon: Icons.dashboard_rounded,
-            label: 'Dashboard',
-            subtitle: '통합 현황',
-            isSelected: true,
-          ),
-          const SizedBox(height: 10),
-          _buildNavigationButton(
-            context: context,
-            icon: Icons.settings_rounded,
-            label: 'Settings',
-            subtitle: '환경 설정',
-          ),
+          Obx(() {
+            final currentSection = dashboardController.currentSection.value;
+            return Column(
+              children: [
+                _buildNavigationButton(
+                  context: context,
+                  icon: Icons.dashboard_rounded,
+                  label: 'Dashboard',
+                  subtitle: 'Overview',
+                  isSelected: currentSection == DashboardSection.dashboard,
+                  onTap: () => dashboardController.selectSection(DashboardSection.dashboard),
+                ),
+                const SizedBox(height: 10),
+                _buildNavigationButton(
+                  context: context,
+                  icon: Icons.campaign_rounded,
+                  label: '\uACF5\uC9C0\uC0AC\uD56D',
+                  subtitle: 'Notices',
+                  isSelected: currentSection == DashboardSection.notices,
+                  onTap: () => dashboardController.selectSection(DashboardSection.notices),
+                ),
+              ],
+            );
+          }),
           const Spacer(),
-          _buildQuickActionButton(context),
-          const SizedBox(height: 18),
+          Obx(() => _buildNavigationButton(
+                context: context,
+                icon: Icons.settings_rounded,
+                label: 'Settings',
+                subtitle: 'Preferences',
+                isSelected: dashboardController.currentSection.value == DashboardSection.settings,
+                onTap: () => dashboardController.selectSection(DashboardSection.settings),
+              )),
+          const SizedBox(height: 12),
+          _buildThemeSettingCard(context, themeController),
+          const SizedBox(height: 12),
           _buildManagerProfileCard(context),
         ],
       ),
@@ -76,6 +100,7 @@ class SidebarNavigation extends StatelessWidget {
             children: [
               Text(
                 'ParkFlow',
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w900,
                       color: palette.primaryText,
@@ -83,6 +108,7 @@ class SidebarNavigation extends StatelessWidget {
               ),
               Text(
                 'Integrated Control',
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: palette.mutedText,
                     ),
@@ -100,48 +126,75 @@ class SidebarNavigation extends StatelessWidget {
     required String label,
     required String subtitle,
     bool isSelected = false,
+    VoidCallback? onTap,
   }) {
     return _NavigationButton(
       icon: icon,
       label: label,
       subtitle: subtitle,
       isSelected: isSelected,
+      onTap: onTap,
     );
   }
 
-  Widget _buildQuickActionButton(BuildContext context) {
+  Widget _buildThemeSettingCard(BuildContext context, AppThemeController controller) {
     final palette = context.palette;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: LinearGradient(
-          colors: [palette.accentBlue, palette.accentCyan],
+    return Obx(() {
+      final isDarkMode = controller.isDarkMode;
+
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: palette.cardBackground,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: palette.cardBorder),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: palette.glowColor,
-            blurRadius: 18,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.flash_on_rounded, color: Colors.white, size: 18),
-          const SizedBox(width: 10),
-          Text(
-            'Quick Monitor',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                ),
-          ),
-        ],
-      ),
-    );
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isDarkMode ? palette.selectedItemBackground : palette.panelBackground,
+              ),
+              child: Icon(
+                isDarkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                size: 18,
+                color: isDarkMode ? palette.accentCyan : palette.accentBlue,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Dark Mode',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    isDarkMode ? 'Enabled' : 'Disabled',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: palette.mutedText,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+            Switch.adaptive(
+              value: isDarkMode,
+              onChanged: (_) => controller.toggleThemeMode(),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildManagerProfileCard(BuildContext context) {
@@ -167,7 +220,7 @@ class SidebarNavigation extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: Text(
-              '김',
+              'K',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w800,
@@ -180,13 +233,15 @@ class SidebarNavigation extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '김관리 소장',
+                  'Kim Admin',
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                 ),
                 Text(
-                  '통합관제 총괄',
+                  'Control Lead',
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: palette.mutedText,
                       ),
@@ -206,54 +261,65 @@ class _NavigationButton extends StatelessWidget {
     required this.label,
     required this.subtitle,
     this.isSelected = false,
+    this.onTap,
   });
 
   final IconData icon;
   final String label;
   final String subtitle;
   final bool isSelected;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: isSelected ? palette.selectedItemBackground : Colors.transparent,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: isSelected ? palette.cardBorder : Colors.transparent,
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: 20,
-            color: isSelected ? palette.accentCyan : palette.secondaryText,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: isSelected ? palette.primaryText : palette.secondaryText,
-                      ),
-                ),
-                Text(
-                  subtitle,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: palette.mutedText,
-                      ),
-                ),
-              ],
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: isSelected ? palette.selectedItemBackground : Colors.transparent,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isSelected ? palette.cardBorder : Colors.transparent,
             ),
           ),
-        ],
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                size: 20,
+                color: isSelected ? palette.accentCyan : palette.secondaryText,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: isSelected ? palette.primaryText : palette.secondaryText,
+                          ),
+                    ),
+                    Text(
+                      subtitle,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: palette.mutedText,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

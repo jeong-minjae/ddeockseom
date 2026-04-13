@@ -7,9 +7,17 @@ class ParkingOverviewCard extends StatelessWidget {
   const ParkingOverviewCard({
     super.key,
     required this.parkingLots,
+    required this.selectedIndex,
+    required this.onParkingLotSelected,
+    required this.selectedLot,
+    required this.onDetailPressed,
   });
 
   final List<ParkingLot> parkingLots;
+  final int selectedIndex;
+  final ValueChanged<int> onParkingLotSelected;
+  final ParkingLot? selectedLot;
+  final VoidCallback? onDetailPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +46,12 @@ class ParkingOverviewCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '실시간 통합 현황',
+                '\uC2E4\uC2DC\uAC04 \uD1B5\uD569 \uD604\uD669',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 4),
               Text(
-                '주차장별 점유율과 잔여 공간을 빠르게 확인하세요.',
+                '\uC8FC\uCC28\uC7A5\uBCC4 \uC810\uC720\uC728\uACFC \uC794\uC5EC \uACF5\uAC04\uC744 \uBE60\uB974\uAC8C \uD655\uC778\uD558\uC138\uC694.',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: palette.mutedText,
                     ),
@@ -52,8 +60,8 @@ class ParkingOverviewCard extends StatelessWidget {
           ),
         ),
         TextButton(
-          onPressed: () {},
-          child: const Text('상세보기'),
+          onPressed: selectedLot == null ? null : onDetailPressed,
+          child: const Text('\uC0C1\uC138\uBCF4\uAE30'),
         ),
       ],
     );
@@ -72,11 +80,14 @@ class ParkingOverviewCard extends StatelessWidget {
             crossAxisCount: isCompactWidth ? 1 : 2,
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
-            childAspectRatio: isCompactWidth ? 2.4 : 1.65,
+            childAspectRatio: isCompactWidth ? 2.35 : 1.65,
           ),
           itemBuilder: (context, index) {
-            final parkingLot = parkingLots[index];
-            return _ParkingLotTile(lot: parkingLot);
+            return _ParkingLotTile(
+              lot: parkingLots[index],
+              isSelected: index == selectedIndex,
+              onTap: () => onParkingLotSelected(index),
+            );
           },
         );
       },
@@ -85,69 +96,89 @@ class ParkingOverviewCard extends StatelessWidget {
 }
 
 class _ParkingLotTile extends StatelessWidget {
-  const _ParkingLotTile({required this.lot});
+  const _ParkingLotTile({
+    required this.lot,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   final ParkingLot lot;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
-    final occupancyPercent = '${(lot.occupancyRate * 100).round()}% 점유';
+    final occupancyPercent = '${(lot.occupancyRate * 100).round()}% \uC810\uC720';
 
-    return Container(
-      padding: const EdgeInsets.all(18),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOutCubic,
       decoration: BoxDecoration(
-        color: palette.panelBackground,
+        color: isSelected ? palette.panelBackground : palette.panelBackground.withOpacity(0.7),
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: palette.cardBorder),
+        border: Border.all(
+          color: isSelected ? lot.progressColor.withOpacity(0.8) : palette.cardBorder,
+          width: isSelected ? 1.4 : 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: palette.glowColor,
-            blurRadius: 18,
+            color: isSelected ? lot.progressColor.withOpacity(0.12) : palette.glowColor,
+            blurRadius: isSelected ? 22 : 18,
             spreadRadius: 0.5,
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildLotHeader(context),
-          const Spacer(),
-          Text(
-            '${lot.occupied} / ${lot.capacity}',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(22),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildLotHeader(context),
+                const Spacer(),
+                Text(
+                  '${lot.occupied} / ${lot.capacity}',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '잔여 ${lot.remaining}면',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: palette.mutedText,
+                const SizedBox(height: 4),
+                Text(
+                  '\uC8FC\uCC28\uAC00\uB2A5 ${lot.available}\uBA74',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: palette.mutedText,
+                      ),
                 ),
-          ),
-          const SizedBox(height: 12),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              minHeight: 8,
-              value: lot.occupancyRate,
-              backgroundColor: palette.progressTrack,
-              valueColor: AlwaysStoppedAnimation<Color>(lot.progressColor),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              occupancyPercent,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: palette.secondaryText,
-                    fontWeight: FontWeight.w600,
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(999),
+                  child: LinearProgressIndicator(
+                    minHeight: 8,
+                    value: lot.occupancyRate,
+                    backgroundColor: palette.progressTrack,
+                    valueColor: AlwaysStoppedAnimation<Color>(lot.progressColor),
                   ),
+                ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    occupancyPercent,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: palette.secondaryText,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -169,11 +200,9 @@ class _ParkingLotTile extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: lot.statusColor.withOpacity(0.18),
+            color: isSelected ? lot.statusColor.withOpacity(0.22) : lot.statusColor.withOpacity(0.18),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(
-              color: lot.progressColor.withOpacity(0.45),
-            ),
+            border: Border.all(color: lot.progressColor.withOpacity(0.45)),
           ),
           child: Text(
             lot.statusLabel,
