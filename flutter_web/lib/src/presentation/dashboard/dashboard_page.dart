@@ -18,8 +18,9 @@ class DashboardPage extends GetView<DashboardViewModel> {
           }
 
           return DashboardShell(
-            child: DashboardContent(
+            childBuilder: (scrollOffset) => DashboardContent(
               controller: controller,
+              scrollOffset: scrollOffset,
             ),
           );
         }),

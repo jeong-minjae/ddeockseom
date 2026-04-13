@@ -45,6 +45,15 @@ class DashboardViewModel extends GetxController {
     return current;
   }
 
+  ParkingLot? get selectedParkingLot {
+    final lots = filteredParkingLots;
+    if (lots.isEmpty) {
+      return null;
+    }
+
+    return lots[selectedIndex];
+  }
+
   void selectParkingLot(int index) {
     final lots = filteredParkingLots;
     if (index < 0 || index >= lots.length) {
