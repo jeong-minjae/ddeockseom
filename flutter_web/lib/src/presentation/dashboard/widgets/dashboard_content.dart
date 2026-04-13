@@ -26,8 +26,6 @@ class DashboardContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildTopSection(snapshot),
-          const SizedBox(height: 20),
-          _buildBottomSection(snapshot),
         ],
       );
     });
@@ -36,91 +34,51 @@ class DashboardContent extends StatelessWidget {
   Widget _buildTopSection(DashboardSnapshot snapshot) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isWideScreen = constraints.maxWidth >= 1120;
-        final selectedLot = snapshot.parkingLots.isEmpty
-            ? null
-            : snapshot.parkingLots[controller.selectedIndex];
+        return Obx(() {
+          final isWideScreen = constraints.maxWidth >= 1120;
+          final selectedIndex = controller.selectedIndex;
+          final selectedLot = snapshot.parkingLots.isEmpty ? null : snapshot.parkingLots[selectedIndex];
 
-        final parkingCard = Obx(
-          () => ParkingOverviewCard(
+          final parkingCard = ParkingOverviewCard(
             parkingLots: snapshot.parkingLots,
-            selectedIndex: controller.selectedIndex,
+            selectedIndex: selectedIndex,
             onParkingLotSelected: controller.selectParkingLot,
-          ),
-        );
+          );
 
-        final mapCard = ParkingLocationMapCard(
-          parkingLots: snapshot.parkingLots,
-          selectedIndex: controller.selectedIndex,
-          onParkingLotSelected: controller.selectParkingLot,
-          selectedLot: selectedLot,
-        );
+          final mapCard = ParkingLocationMapCard(
+            parkingLots: snapshot.parkingLots,
+            selectedIndex: selectedIndex,
+            onParkingLotSelected: controller.selectParkingLot,
+            selectedLot: selectedLot,
+          );
 
-        if (isWideScreen) {
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          if (isWideScreen) {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: parkingCard,
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  flex: 2,
+                  child: mapCard,
+                ),
+              ],
+            );
+          }
+
+          return Column(
             children: [
-              Expanded(
-                flex: 3,
-                child: parkingCard,
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                flex: 2,
-                child: mapCard,
-              ),
+              parkingCard,
+              const SizedBox(height: 18),
+              mapCard,
             ],
           );
-        }
-
-        return Column(
-          children: [
-            parkingCard,
-            const SizedBox(height: 18),
-            mapCard,
-          ],
-        );
+        });
       },
     );
   }
 
-  Widget _buildBottomSection(DashboardSnapshot snapshot) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isWideScreen = constraints.maxWidth >= 1120;
-
-        if (isWideScreen) {
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 3,
-                child: ActivityLogCard(
-                  logs: snapshot.activityLogs,
-                  lastUpdatedLabel: snapshot.lastUpdatedLabel,
-                ),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: SystemStatusCard(
-                  statuses: snapshot.systemStatuses,
-                ),
-              ),
-            ],
-          );
-        }
-
-        return Column(
-          children: [
-            ActivityLogCard(
-              logs: snapshot.activityLogs,
-              lastUpdatedLabel: snapshot.lastUpdatedLabel,
-            ),
-            const SizedBox(height: 18),
-            SystemStatusCard(statuses: snapshot.systemStatuses),
-          ],
-        );
-      },
-    );
-  }
 }

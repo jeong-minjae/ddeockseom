@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/dashboard_palette.dart';
 import '../../../domain/models/parking_lot.dart';
+import '../../../domain/models/parking_lot_labels.dart';
 
 class ParkingLocationMapCard extends StatelessWidget {
   const ParkingLocationMapCard({
@@ -128,6 +129,7 @@ class ParkingLocationMapCard extends StatelessWidget {
                           right: 18,
                           bottom: 18,
                           child: _SelectedLotInfo(
+                            selectedIndex: selectedIndex,
                             selectedLot: selectedLot,
                             palette: palette,
                           ),
@@ -434,8 +436,7 @@ class _MapCanvasPainter extends CustomPainter {
       fontWeight: FontWeight.w700,
     );
 
-    _paintLabel(canvas, '\uD55C\uAC15', size.width * 0.10, size.height * 0.56, smallStyle, rotate: -0.08);
-    _paintLabel(canvas, '\uD55C\uAC15\uACF5\uC6D0', size.width * 0.48, size.height * 0.50, labelStyle);
+    _paintLabel(canvas, '\uB6DD\uC12C', size.width * 0.16, size.height * 0.53, labelStyle);
     _paintLabel(canvas, '\uC790\uC591\uB3D9', size.width * 0.69, size.height * 0.58, smallStyle);
     _paintLabel(canvas, '\uC131\uC218\uB300\uAD50', size.width * 0.28, size.height * 0.25, smallStyle, rotate: -0.12);
     _paintLabel(canvas, '\uC601\uB3D9\uB300\uAD50', size.width * 0.56, size.height * 0.26, smallStyle, rotate: 0.08);
@@ -487,7 +488,7 @@ class _MapMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = isSelected ? '\uC120\uD0DD' : '${index + 1}';
+    final label = isSelected ? '\uC120\uD0DD' : 'P${index + 1}';
 
     return Positioned(
       left: left,
@@ -552,10 +553,12 @@ class _MapMarker extends StatelessWidget {
 
 class _SelectedLotInfo extends StatelessWidget {
   const _SelectedLotInfo({
+    required this.selectedIndex,
     required this.selectedLot,
     required this.palette,
   });
 
+  final int selectedIndex;
   final ParkingLot? selectedLot;
   final DashboardPalette palette;
 
@@ -573,8 +576,8 @@ class _SelectedLotInfo extends StatelessWidget {
               palette: palette,
             )
           : _InfoCard(
-              key: ValueKey(lot.name),
-              title: lot.name,
+              key: ValueKey(ParkingLotLabels.forIndex(selectedIndex)),
+              title: ParkingLotLabels.forIndex(selectedIndex),
               subtitle:
                   '\uB0A8\uC740 ${lot.available}\uBA74 \u00B7 ${lot.latitude.toStringAsFixed(5)}, ${lot.longitude.toStringAsFixed(5)}',
               palette: palette,
