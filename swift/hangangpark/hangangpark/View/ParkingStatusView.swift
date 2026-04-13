@@ -15,26 +15,29 @@ struct ParkingStatusView: View {
             Color(red: 0.95, green: 0.97, blue: 0.99)
                 .ignoresSafeArea()
 
-            ScrollView {
-                VStack(spacing: 22) {
-                    header
-                    currentSummary
-                    currentParkingSection
-                    actionButtons
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(spacing: 22) {
+                        header
+                        currentSummary(proxy: proxy)
+                        currentParkingSection
+                            .id("currentParkingSection")
+                        actionButtons
 
-                    if !viewModel.message.isEmpty {
-                        Text(viewModel.message)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(14)
-                            .background(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                        if !viewModel.message.isEmpty {
+                            Text(viewModel.message)
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(14)
+                                .background(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
                     }
+                    .padding(.horizontal, 22)
+                    .padding(.top, 20)
+                    .padding(.bottom, 32)
                 }
-                .padding(.horizontal, 22)
-                .padding(.top, 20)
-                .padding(.bottom, 32)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -97,22 +100,45 @@ struct ParkingStatusView: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
-    private var currentSummary: some View {
-        HStack(spacing: 14) {
-            SummaryCard(title: "현재 잔여", value: "\(viewModel.totalAvailable)대", systemImage: "parkingsign.circle.fill")
-            SummaryCard(title: "조회 구역", value: "4곳", systemImage: "mappin.and.ellipse")
+    private func currentSummary(proxy: ScrollViewProxy) -> some View {
+        VStack(spacing: 12) {
+            NavigationLink {
+                NoticeView()
+            } label: {
+                SummaryCard(
+                    title: "공지사항",
+                    value: "공지",
+                    systemImage: "megaphone.fill",
+                    iconColor: .white,
+                    iconBackgroundColor: Color(red: 0.88, green: 0.18, blue: 0.18)
+                )
+            }
+            .buttonStyle(.plain)
+
+            HStack(spacing: 14) {
+                Button {
+                    withAnimation(.easeInOut) {
+                        proxy.scrollTo("currentParkingSection", anchor: .top)
+                    }
+                } label: {
+                    SummaryCard(title: "현재 잔여", value: "\(viewModel.totalAvailable)대", systemImage: "parkingsign.circle.fill")
+                }
+                .buttonStyle(.plain)
+
+                SummaryCard(title: "조회 구역", value: "4곳", systemImage: "mappin.and.ellipse")
+            }
         }
     }
 
     private var currentParkingSection: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 20) {
             HStack {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text("현재 잔여 대수")
-                        .font(.title3.weight(.bold))
+                        .font(.title2.weight(.bold))
                         .foregroundStyle(Color(red: 0.12, green: 0.16, blue: 0.22))
                     Text("한강공원 주차 페이지의 주차가능대수를 가져옵니다.")
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
 
@@ -142,12 +168,7 @@ struct ParkingStatusView: View {
             NavigationLink {
                 ParkingPredictionView(viewModel: viewModel)
             } label: {
-                MainActionButtonLabel(
-                    title: "잔여 대수 예측하기",
-                    subtitle: "1~8시간 뒤 주차장별 잔여 대수를 확인하세요.",
-                    systemImage: "clock.fill",
-                    color: Color(red: 0.16, green: 0.38, blue: 0.83)
-                )
+                PredictionActionButtonLabel()
             }
             .buttonStyle(.plain)
 
@@ -182,23 +203,29 @@ private struct SummaryCard: View {
     let title: String
     let value: String
     let systemImage: String
+    var iconColor = Color(red: 0.16, green: 0.38, blue: 0.83)
+    var iconBackgroundColor = Color(red: 0.92, green: 0.95, blue: 1.0)
 
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: systemImage)
                 .font(.headline)
-                .foregroundStyle(Color(red: 0.16, green: 0.38, blue: 0.83))
+                .foregroundStyle(iconColor)
                 .frame(width: 38, height: 38)
-                .background(Color(red: 0.92, green: 0.95, blue: 1.0))
+                .background(iconBackgroundColor)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
                 Text(value)
                     .font(.title3.weight(.bold))
                     .foregroundStyle(Color(red: 0.12, green: 0.16, blue: 0.22))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
             }
 
             Spacer(minLength: 0)
@@ -208,6 +235,41 @@ private struct SummaryCard: View {
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .shadow(color: .black.opacity(0.05), radius: 12, x: 0, y: 6)
+    }
+}
+
+private struct PredictionActionButtonLabel: View {
+    var body: some View {
+        HStack(spacing: 16) {
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.white)
+                .frame(width: 56, height: 56)
+                .background(Color.white.opacity(0.18))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("잔여 대수 예측하기")
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(.white)
+
+                Text("1~8시간 뒤 주차장별 여유 공간을 미리 확인하세요.")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.86))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.headline.weight(.bold))
+                .foregroundStyle(.white.opacity(0.86))
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity)
+        .background(Color(red: 0.16, green: 0.38, blue: 0.83))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .shadow(color: Color(red: 0.16, green: 0.38, blue: 0.83).opacity(0.24), radius: 16, x: 0, y: 8)
     }
 }
 
