@@ -166,19 +166,6 @@ class _LoginPageState extends State<LoginPage> {
             isLoading: _isLoading,
             onPressed: _submit,
           ),
-          const SizedBox(height: 16),
-          Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('Need an admin account?'),
-                TextButton(
-                  onPressed: () => Navigator.pushNamed(context, AuthRoutes.signup),
-                  child: const Text('Sign up'),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );

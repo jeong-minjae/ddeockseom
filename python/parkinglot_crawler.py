@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 import requests
 import urllib3
 from lxml import html
+from requests import RequestException
 from urllib3.exceptions import InsecureRequestWarning
 
 import config
@@ -134,22 +135,29 @@ def crawl_live_parkinglots() -> list[dict[str, Any]]:
         raise RuntimeError("PARKINGLOT_SOURCE_URL is invalid.")
 
     session = requests.Session()
-    response = session.get(
-        source_url,
-        headers={
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
-            ),
-        },
-        timeout=15,
-        verify=False,
-    )
+    try:
+        response = session.get(
+            source_url,
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+                ),
+            },
+            timeout=15,
+            verify=False,
+        )
+    except RequestException:
+        return _fallback_rows()
 
     if response.status_code >= 400:
         return _fallback_rows()
 
-    response.encoding = response.apparent_encoding or "utf-8"
+    try:
+        response.encoding = response.apparent_encoding or response.encoding or "utf-8"
+    except Exception:
+        response.encoding = response.encoding or "utf-8"
+
     try:
         root = html.fromstring(response.text)
     except Exception:

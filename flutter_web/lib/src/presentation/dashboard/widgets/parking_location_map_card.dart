@@ -12,12 +12,16 @@ class ParkingLocationMapCard extends StatelessWidget {
     required this.selectedIndex,
     required this.onParkingLotSelected,
     required this.selectedLot,
+    this.height = 420,
+    this.isDetailView = false,
   });
 
   final List<ParkingLot> parkingLots;
   final int selectedIndex;
   final ValueChanged<int> onParkingLotSelected;
   final ParkingLot? selectedLot;
+  final double height;
+  final bool isDetailView;
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +42,15 @@ class ParkingLocationMapCard extends StatelessWidget {
                     children: [
                       Text(
                         '\uC8FC\uCC28\uC7A5 \uC704\uCE58',
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: palette.primaryText,
+                            ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '\uC8FC\uCC28\uC7A5\uC744 \uC120\uD0DD\uD558\uBA74 \uC9C0\uB3C4\uC758 \uC911\uC2EC\uC73C\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4.',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: palette.mutedText,
+                              color: palette.secondaryText,
                             ),
                       ),
                     ],
@@ -69,13 +75,13 @@ class ParkingLocationMapCard extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             SizedBox(
-              height: 420,
+              height: height,
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   final viewport = Size(constraints.maxWidth, constraints.maxHeight);
                   final worldSize = Size(
-                    math.max(viewport.width * 1.56, 1120),
-                    math.max(viewport.height * 1.42, 740),
+                    math.max(viewport.width * (isDetailView ? 1.82 : 1.56), isDetailView ? 1320 : 1120),
+                    math.max(viewport.height * (isDetailView ? 1.62 : 1.42), isDetailView ? 860 : 740),
                   );
                   final placements = _buildPlacements(worldSize);
                   final selectedPlacement = placements.isEmpty
@@ -99,27 +105,41 @@ class ParkingLocationMapCard extends StatelessWidget {
                           child: SizedBox(
                             width: worldSize.width,
                             height: worldSize.height,
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: _MapBackdrop(
-                                    child: CustomPaint(
-                                      painter: _MapCanvasPainter(
-                                        palette: palette,
+                            child: InteractiveViewer(
+                              constrained: false,
+                              boundaryMargin: EdgeInsets.symmetric(
+                                horizontal: worldSize.width * 0.25,
+                                vertical: worldSize.height * 0.25,
+                              ),
+                              minScale: 0.72,
+                              maxScale: 2.1,
+                              child: SizedBox(
+                                width: worldSize.width,
+                                height: worldSize.height,
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      child: _MapBackdrop(
+                                        child: CustomPaint(
+                                          painter: _MapCanvasPainter(
+                                            palette: palette,
+                                            isDetailView: isDetailView,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                    for (final placement in placements)
+                                      _MapMarker(
+                                        lot: placement.lot,
+                                        index: placement.index,
+                                        isSelected: placement.index == selectedIndex,
+                                        left: placement.left,
+                                        top: placement.top,
+                                        onTap: () => onParkingLotSelected(placement.index),
+                                      ),
+                                  ],
                                 ),
-                                for (final placement in placements)
-                                  _MapMarker(
-                                    lot: placement.lot,
-                                    index: placement.index,
-                                    isSelected: placement.index == selectedIndex,
-                                    left: placement.left,
-                                    top: placement.top,
-                                    onTap: () => onParkingLotSelected(placement.index),
-                                  ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
@@ -128,6 +148,7 @@ class ParkingLocationMapCard extends StatelessWidget {
                           right: 18,
                           bottom: 18,
                           child: _SelectedLotInfo(
+                            selectedIndex: selectedIndex,
                             selectedLot: selectedLot,
                             palette: palette,
                           ),
@@ -277,9 +298,11 @@ class _MapBackdrop extends StatelessWidget {
 class _MapCanvasPainter extends CustomPainter {
   _MapCanvasPainter({
     required this.palette,
+    required this.isDetailView,
   });
 
   final DashboardPalette palette;
+  final bool isDetailView;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -288,37 +311,65 @@ class _MapCanvasPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
     canvas.drawRect(Offset.zero & size, bgPaint);
 
+    _drawDistrictBlocks(canvas, size);
     _drawRiver(canvas, size);
     _drawRoads(canvas, size);
-    _drawDistricts(canvas, size);
+    _drawParks(canvas, size);
     _drawLandmarks(canvas, size);
-    _drawGrid(canvas, size);
   }
 
-  void _drawGrid(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = palette.cardBorder.withOpacity(0.18)
-      ..strokeWidth = 1;
-    for (var x = 1; x < 6; x++) {
-      final dx = size.width * x / 6;
-      canvas.drawLine(Offset(dx, 0), Offset(dx, size.height), paint);
-    }
-    for (var y = 1; y < 5; y++) {
-      final dy = size.height * y / 5;
-      canvas.drawLine(Offset(0, dy), Offset(size.width, dy), paint);
+  void _drawDistrictBlocks(Canvas canvas, Size size) {
+    final fill = Paint()
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFFF2F7FD).withOpacity(0.75);
+    final stroke = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2
+      ..color = const Color(0xFFD7E3F3).withOpacity(0.95);
+
+    final blocks = [
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(size.width * 0.04, size.height * 0.10, size.width * 0.28, size.height * 0.28),
+        const Radius.circular(26),
+      ),
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(size.width * 0.34, size.height * 0.08, size.width * 0.23, size.height * 0.22),
+        const Radius.circular(24),
+      ),
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(size.width * 0.61, size.height * 0.10, size.width * 0.32, size.height * 0.24),
+        const Radius.circular(28),
+      ),
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(size.width * 0.10, size.height * 0.63, size.width * 0.22, size.height * 0.20),
+        const Radius.circular(22),
+      ),
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(size.width * 0.36, size.height * 0.62, size.width * 0.26, size.height * 0.18),
+        const Radius.circular(22),
+      ),
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(size.width * 0.68, size.height * 0.63, size.width * 0.22, size.height * 0.18),
+        const Radius.circular(22),
+      ),
+    ];
+
+    for (final block in blocks) {
+      canvas.drawRRect(block, fill);
+      canvas.drawRRect(block, stroke);
     }
   }
 
   void _drawRiver(Canvas canvas, Size size) {
     final riverPaint = Paint()
-      ..color = const Color(0xFF7DDBFF).withOpacity(0.95)
-      ..strokeWidth = 26
+      ..color = const Color(0xFF74D8FF).withOpacity(0.98)
+      ..strokeWidth = isDetailView ? 30 : 26
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
     final riverEdge = Paint()
-      ..color = const Color(0xFFD7F7FF).withOpacity(0.95)
-      ..strokeWidth = 34
+      ..color = const Color(0xFFE6FAFF).withOpacity(0.98)
+      ..strokeWidth = isDetailView ? 40 : 34
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
@@ -355,21 +406,21 @@ class _MapCanvasPainter extends CustomPainter {
 
   void _drawRoads(Canvas canvas, Size size) {
     final roadPaint = Paint()
-      ..color = const Color(0xFF95A7C7).withOpacity(0.88)
-      ..strokeWidth = 14
+      ..color = const Color(0xFF8EA2C1).withOpacity(0.92)
+      ..strokeWidth = isDetailView ? 15 : 14
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
     final roadHighlight = Paint()
-      ..color = Colors.white.withOpacity(0.75)
+      ..color = Colors.white.withOpacity(0.8)
       ..strokeWidth = 4
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
     final bridges = [
-      (Offset(size.width * 0.18, size.height * 0.31), Offset(size.width * 0.45, size.height * 0.26)),
-      (Offset(size.width * 0.52, size.height * 0.25), Offset(size.width * 0.73, size.height * 0.31)),
-      (Offset(size.width * 0.76, size.height * 0.40), Offset(size.width * 0.93, size.height * 0.35)),
+      (Offset(size.width * 0.12, size.height * 0.27), Offset(size.width * 0.48, size.height * 0.21)),
+      (Offset(size.width * 0.50, size.height * 0.22), Offset(size.width * 0.77, size.height * 0.29)),
+      (Offset(size.width * 0.76, size.height * 0.38), Offset(size.width * 0.96, size.height * 0.33)),
     ];
 
     for (final bridge in bridges) {
@@ -379,11 +430,14 @@ class _MapCanvasPainter extends CustomPainter {
 
     final majorRoads = [
       Path()
-        ..moveTo(size.width * 0.10, size.height * 0.74)
-        ..lineTo(size.width * 0.92, size.height * 0.74),
+        ..moveTo(size.width * 0.04, size.height * 0.74)
+        ..lineTo(size.width * 0.96, size.height * 0.74),
       Path()
-        ..moveTo(size.width * 0.36, size.height * 0.12)
-        ..lineTo(size.width * 0.36, size.height * 0.90),
+        ..moveTo(size.width * 0.39, size.height * 0.06)
+        ..lineTo(size.width * 0.39, size.height * 0.94),
+      Path()
+        ..moveTo(size.width * 0.68, size.height * 0.14)
+        ..lineTo(size.width * 0.68, size.height * 0.88),
     ];
 
     for (final road in majorRoads) {
@@ -392,34 +446,36 @@ class _MapCanvasPainter extends CustomPainter {
     }
   }
 
-  void _drawDistricts(Canvas canvas, Size size) {
-    final fillPaint = Paint()..style = PaintingStyle.fill;
-    final borderPaint = Paint()
-      ..color = const Color(0xFFABC0E4).withOpacity(0.9)
+  void _drawParks(Canvas canvas, Size size) {
+    final parkFill = Paint()
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFFDFF3D8).withOpacity(0.88);
+    final parkStroke = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+      ..strokeWidth = 1.3
+      ..color = const Color(0xFFC7E4BC).withOpacity(0.95);
 
-    final park = Path()
-      ..addRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(size.width * 0.58, size.height * 0.21, size.width * 0.20, size.height * 0.22),
-          const Radius.circular(32),
-        ),
-      );
-    fillPaint.color = const Color(0xFFDDF5DE).withOpacity(0.88);
-    canvas.drawPath(park, fillPaint);
-    canvas.drawPath(park, borderPaint);
+    final parks = [
+      Path()
+        ..moveTo(size.width * 0.02, size.height * 0.03)
+        ..lineTo(size.width * 0.30, size.height * 0.03)
+        ..lineTo(size.width * 0.34, size.height * 0.18)
+        ..lineTo(size.width * 0.22, size.height * 0.23)
+        ..lineTo(size.width * 0.05, size.height * 0.19)
+        ..close(),
+      Path()
+        ..moveTo(size.width * 0.57, size.height * 0.05)
+        ..lineTo(size.width * 0.95, size.height * 0.05)
+        ..lineTo(size.width * 0.95, size.height * 0.22)
+        ..lineTo(size.width * 0.79, size.height * 0.28)
+        ..lineTo(size.width * 0.59, size.height * 0.20)
+        ..close(),
+    ];
 
-    final island = Path()
-      ..addRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(size.width * 0.40, size.height * 0.34, size.width * 0.34, size.height * 0.28),
-          const Radius.circular(42),
-        ),
-      );
-    fillPaint.color = const Color(0xFFF2F7FF).withOpacity(0.86);
-    canvas.drawPath(island, fillPaint);
-    canvas.drawPath(island, borderPaint);
+    for (final park in parks) {
+      canvas.drawPath(park, parkFill);
+      canvas.drawPath(park, parkStroke);
+    }
   }
 
   void _drawLandmarks(Canvas canvas, Size size) {
@@ -434,12 +490,14 @@ class _MapCanvasPainter extends CustomPainter {
       fontWeight: FontWeight.w700,
     );
 
-    _paintLabel(canvas, '\uD55C\uAC15', size.width * 0.10, size.height * 0.56, smallStyle, rotate: -0.08);
-    _paintLabel(canvas, '\uD55C\uAC15\uACF5\uC6D0', size.width * 0.48, size.height * 0.50, labelStyle);
+    _paintLabel(canvas, '\uB69D\uC12C', size.width * 0.15, size.height * 0.54, labelStyle);
+    _paintLabel(canvas, '\uB69D\uC12C\uD55C\uAC15\uACF5\uC6D0', size.width * 0.11, size.height * 0.61, smallStyle);
     _paintLabel(canvas, '\uC790\uC591\uB3D9', size.width * 0.69, size.height * 0.58, smallStyle);
     _paintLabel(canvas, '\uC131\uC218\uB300\uAD50', size.width * 0.28, size.height * 0.25, smallStyle, rotate: -0.12);
     _paintLabel(canvas, '\uC601\uB3D9\uB300\uAD50', size.width * 0.56, size.height * 0.26, smallStyle, rotate: 0.08);
     _paintLabel(canvas, '\uCCAD\uB2F4\uB300\uAD50', size.width * 0.80, size.height * 0.32, smallStyle, rotate: -0.06);
+    _paintLabel(canvas, '\uD55C\uAC15', size.width * 0.49, size.height * 0.47, smallStyle, rotate: -0.08);
+    _paintLabel(canvas, '\uC7A0\uC2E4\uB300\uAD50', size.width * 0.88, size.height * 0.47, smallStyle, rotate: 0.1);
   }
 
   void _paintLabel(
@@ -464,7 +522,7 @@ class _MapCanvasPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _MapCanvasPainter oldDelegate) {
-    return oldDelegate.palette != palette;
+    return oldDelegate.palette != palette || oldDelegate.isDetailView != isDetailView;
   }
 }
 
@@ -487,7 +545,7 @@ class _MapMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = isSelected ? '\uC120\uD0DD' : '${index + 1}';
+    final label = isSelected ? '\uC120\uD0DD' : 'P${index + 1}';
 
     return Positioned(
       left: left,
@@ -552,16 +610,19 @@ class _MapMarker extends StatelessWidget {
 
 class _SelectedLotInfo extends StatelessWidget {
   const _SelectedLotInfo({
+    required this.selectedIndex,
     required this.selectedLot,
     required this.palette,
   });
 
+  final int selectedIndex;
   final ParkingLot? selectedLot;
   final DashboardPalette palette;
 
   @override
   Widget build(BuildContext context) {
     final lot = selectedLot;
+    final palette = this.palette;
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 240),
@@ -569,7 +630,7 @@ class _SelectedLotInfo extends StatelessWidget {
           ? _InfoCard(
               key: const ValueKey('empty'),
               title: '\uC8FC\uCC28\uC7A5\uC744 \uC120\uD0DD\uD558\uC138\uC694',
-              subtitle: '\uC67C\uCABD \uCE74\uB4DC\uC5D0\uC11C 1~4\uBC88 \uC8FC\uCC28\uC7A5\uC744 \uB204\uB974\uBA74 \uC9C0\uB3C4 \uC911\uC559\uC73C\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4.',
+              subtitle: '\uAC80\uC0C9\uC5B4\uB97C \uC9C0\uC6B0\uAC70\uB098 \uC67C\uCABD \uCE74\uB4DC\uC5D0\uC11C \uC8FC\uCC28\uC7A5\uC744 \uC120\uD0DD\uD558\uC138\uC694.',
               palette: palette,
             )
           : _InfoCard(
@@ -606,12 +667,12 @@ class _InfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withOpacity(0.96),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: palette.cardBorder),
+        border: Border.all(color: const Color(0xFF1D314F).withOpacity(0.18)),
         boxShadow: [
           BoxShadow(
-            color: palette.glowColor,
+            color: const Color(0xFF3B82F6).withOpacity(0.10),
             blurRadius: 14,
             spreadRadius: 0.2,
           ),
@@ -636,6 +697,7 @@ class _InfoCard extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: const Color(0xFF1B2430),
                         fontWeight: FontWeight.w800,
                       ),
                 ),
@@ -643,7 +705,7 @@ class _InfoCard extends StatelessWidget {
                 Text(
                   subtitle,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: palette.mutedText,
+                        color: const Color(0xFF7A8799),
                       ),
                 ),
               ],
@@ -659,7 +721,7 @@ class _InfoCard extends StatelessWidget {
               child: Text(
                 trailing!,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: palette.primaryText,
+                      color: const Color(0xFF1B2430),
                       fontWeight: FontWeight.w700,
                     ),
               ),

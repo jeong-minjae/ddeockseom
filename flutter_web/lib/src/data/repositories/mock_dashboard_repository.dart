@@ -16,7 +16,7 @@ class MockDashboardRepository implements DashboardRepository {
       lastUpdatedLabel: '\uB9C8\uC9C0\uB9C9 \uAC31\uC2E0: 2026-04-09 17:40',
       parkingLots: const [
         ParkingLot(
-          name: '\uB6DD\uC12C \uC81C1\uC8FC\uCC28\uC7A5',
+          name: '\uB69D\uC12C \uC81C1 \uC8FC\uCC28\uC7A5',
           occupied: 44,
           available: 20,
           capacity: 64,
@@ -27,7 +27,7 @@ class MockDashboardRepository implements DashboardRepository {
           progressColor: Color(0xFFFFA726),
         ),
         ParkingLot(
-          name: '\uB6DD\uC12C \uC81C2\uC8FC\uCC28\uC7A5',
+          name: '\uB69D\uC12C \uC81C2 \uC8FC\uCC28\uC7A5',
           occupied: 302,
           available: 54,
           capacity: 356,
@@ -38,7 +38,7 @@ class MockDashboardRepository implements DashboardRepository {
           progressColor: Color(0xFFFF5A52),
         ),
         ParkingLot(
-          name: '\uB6DD\uC12C \uC81C3\uC8FC\uCC28\uC7A5',
+          name: '\uB69D\uC12C \uC81C3 \uC8FC\uCC28\uC7A5',
           occupied: 88,
           available: 35,
           capacity: 123,
@@ -49,7 +49,7 @@ class MockDashboardRepository implements DashboardRepository {
           progressColor: Color(0xFFFFA726),
         ),
         ParkingLot(
-          name: '\uB6DD\uC12C \uC81C4\uC8FC\uCC28\uC7A5',
+          name: '\uB69D\uC12C \uC81C4 \uC8FC\uCC28\uC7A5',
           occupied: 87,
           available: 44,
           capacity: 131,
@@ -64,28 +64,28 @@ class MockDashboardRepository implements DashboardRepository {
         ActivityLog(
           vehicleNumber: '12\uAC00 3456',
           type: '\uC785\uCC28',
-          location: '\uB6DD\uC12C \uC8FC\uCC28\uC7A5 A \uAD6C\uC5ED',
+          location: '\uB69D\uC12C \uC8FC\uCC28\uC7A5 A \uAD6C\uC5ED',
           time: '14:22:15',
           status: '\uC644\uB8CC',
         ),
         ActivityLog(
           vehicleNumber: '98\uB098 7654',
           type: '\uCD9C\uCC28',
-          location: '\uB6DD\uC12C \uC8FC\uCC28\uC7A5 B \uAD6C\uC5ED',
+          location: '\uB69D\uC12C \uC8FC\uCC28\uC7A5 B \uAD6C\uC5ED',
           time: '14:20:02',
           status: '\uC644\uB8CC',
         ),
         ActivityLog(
           vehicleNumber: '55\uB2E4 1212',
           type: '\uC785\uCC28',
-          location: '\uB6DD\uC12C \uC8FC\uCC28\uC7A5 C \uAD6C\uC5ED',
+          location: '\uB69D\uC12C \uC8FC\uCC28\uC7A5 C \uAD6C\uC5ED',
           time: '14:18:45',
           status: '\uC644\uB8CC',
         ),
         ActivityLog(
           vehicleNumber: '77\uB77C 9021',
           type: '\uC785\uCC28',
-          location: '\uB6DD\uC12C \uC8FC\uCC28\uC7A5 \uC9C4\uC785\uB85C',
+          location: '\uB69D\uC12C \uC8FC\uCC28\uC7A5 \uC9C4\uC785\uB85C',
           time: '14:15:09',
           status: '\uC644\uB8CC',
         ),
